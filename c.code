@@ -1,0 +1,146 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node{
+  int digit;
+  struct node *next;
+};
+
+struct node *sum (struct node *num1, struct node *num2);
+struct node *read_numbers(struct node *first);
+struct node *add_to_list(struct node *list, int n);
+void free_node(struct node *n);
+struct node *append(struct node *list,int num);
+int length(struct node *n);
+
+
+int main(void){
+int ch,i,extra;
+struct node *add;
+struct node *list1=NULL;
+struct node *list2=NULL;
+
+
+
+list1= read_numbers(list1);
+list2= read_numbers(list2);
+if (length(list1)< length(list2)){
+	extra=length(list2)-length(list1);
+	for(i=0;i<extra;i++){
+		list1= append(list1,0);	
+	}
+	}
+else if(length(list2)<length(list1)){
+	extra=length(list1)-length(list2);
+	for(i=0;i<extra;i++){
+		list2= append(list2,0);	
+	}
+	}
+
+add=sum(list1, list2);
+		
+
+while(add!=NULL){
+	printf("%d\n", add->digit);
+	add=add->next;
+	}
+	
+
+
+free_node(list1);
+free_node(list2);
+free_node(add);
+return(0);
+}
+
+
+struct node *append(struct node *list, int num){
+	struct node *new_node;
+	struct node *temp;
+	temp=list;
+	new_node= (struct node *) malloc(sizeof(struct node));
+	if (new_node==NULL){
+		printf("Error: malloc failed to add_to_list\n");
+	  exit(EXIT_FAILURE);
+	}
+	while(temp->next!=NULL){
+		temp=temp->next;
+		}
+	temp->next=new_node;
+	new_node->digit=num;
+	new_node->next= NULL;
+	return list;
+}
+
+
+
+
+
+void free_node(struct node *n) {
+  struct node *p, *next;
+  for (p = n; p != NULL; p = next) {
+    next = p->next;
+    free(p);
+  }
+}
+
+int length(struct node *n){
+	int count=0;
+	while(n!=NULL){
+		count++;
+		n=n->next;
+	}
+	return count;
+	}
+
+struct node *sum (struct node *num1, struct node *num2){
+	struct node *first= NULL;
+	int sum=0;
+	int carry_over=0;
+	while(num1!=NULL && num2!=NULL){
+		sum=num1->digit+num2->digit+carry_over;
+	  	if (sum >= 10){
+	    	sum=sum %10;
+	    	carry_over=1;
+	  	}
+	  	else{
+	  		carry_over=0;
+	  		}
+	  	first= add_to_list(first,sum);
+	  	num1=num1->next;
+	  	num2=num2->next;
+	  	}
+	return first;
+}
+
+
+
+
+
+
+struct node *read_numbers(struct node *first){
+	int n, ch;
+	printf("Enter the Number:");
+	for(;;){
+		ch=getchar();
+	if(ch=='\n'){
+		return first;
+	}
+  else{
+    ch= ch-'0';
+	  first=add_to_list(first,ch);
+	}
+  }
+}
+
+struct node *add_to_list(struct node *list, int n){
+	struct node *new_node;
+	new_node= (struct node *) malloc(sizeof(struct node));
+	if (new_node==NULL){
+		printf("Error: malloc failed to add_to_list\n");
+	  exit(EXIT_FAILURE);
+	}
+	new_node->digit=n;
+	new_node->next=list;
+	return new_node;
+}
